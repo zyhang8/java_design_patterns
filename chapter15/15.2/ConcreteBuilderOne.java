@@ -1,20 +1,20 @@
 import javax.swing.*;
 public class ConcreteBuilderOne implements Builder{
-      private PanelProduct panel;       //ÐèÒª´´½¨µÄÈÝÆ÷
+      private PanelProduct panel;
       ConcreteBuilderOne(){
             panel=new PanelProduct();
       } 
       public void buildButton(){
-            panel.button=new JButton("°´Å¥");
+            panel.button=new JButton("æŒ‰é’®");
       }
       public void buildLabel(){
-           panel.label=new JLabel("±êÇ©");
+           panel.label=new JLabel("æ ‡ç­¾");
       }
       public void buildTextField(){
-           panel.textField=new JTextField("ÎÄ±¾¿ò");
+           panel.textField=new JTextField("æ–‡æœ¬æ¡†");
       }
       public JPanel  getPanel(){
-           panel.add(panel.button); //ÓëConcreteBuilderTwoÌí¼Ó×é¼þµÄË³ÐòµÄ²»Í¬
+           panel.add(panel.button);
            panel.add(panel.label);
            panel.add(panel.textField);
            return panel;

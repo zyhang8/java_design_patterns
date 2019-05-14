@@ -1,4 +1,4 @@
-class Circle implements Cloneable{   //实现Cloneable接口
+class Circle implements Cloneable{
      private double radius;
      public void setRadius(double r){
            radius=r;
@@ -6,20 +6,20 @@ class Circle implements Cloneable{   //实现Cloneable接口
     public double getRadius(){
           return radius;
     }
-    public Object clone() throws CloneNotSupportedException{ //重写clone方法
+    public Object clone() throws CloneNotSupportedException{
           Object  object=super.clone();
           return object;
     }
 }
-public class ExampleOne{
-    public static void main(String args[]){
-         Circle circle=new Circle();
-         circle.setRadius(198.99);
-         try{
-              Circle circleCopy=(Circle)circle.clone();//调用clone()复制自己
-              System.out.println("circle对象中的数据："+circle.getRadius());
-              System.out.println("circleCopy对象中的数据："+circle.getRadius()); 
-           }
-          catch(CloneNotSupportedException exp){} 
-    } 
+public class ExampleOne {
+    public static void main(String args[]) {
+        Circle circle = new Circle();
+        circle.setRadius(198.99);
+        try {
+            Circle circleCopy = (Circle) circle.clone();
+            System.out.println("circle瀵硅薄涓殑鏁版嵁" + circle.getRadius());
+            System.out.println("circleCopy瀵硅薄涓殑鏁版嵁" + circle.getRadius());
+        } catch (CloneNotSupportedException exp) {
+        }
+    }
 }
