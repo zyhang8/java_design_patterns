@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>适配器模式.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+<link rel="stylesheet" href="file:///github-markdown.css" type="text/css">
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">适配器模式</h1>
+<!-- TOC -->
+<ul>
+<li><a href="#%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">适配器模式</a>
+<ul>
+<li><a href="#%E6%89%A9%E5%B1%95%E5%9D%9E%E7%A8%8B%E5%BA%8F%E4%B8%80">扩展坞（程序一）</a>
+<ul>
+<li><a href="#%E4%B8%80%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%A1%88%E4%BE%8B%E6%8F%8F%E8%BF%B0">一、应用场景与案例描述</a></li>
+<li><a href="#%E4%BA%8C%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">二、案例分析与解决问题</a></li>
+<li><a href="#%E4%B8%89%E5%90%84%E7%A7%8D%E8%A7%92%E8%89%B2%E6%8F%8F%E8%BF%B0%E4%B8%8Euml">三、各种角色描述与UML</a>
+<ul>
+<li><a href="#1%E7%9B%AE%E6%A0%87target">1.目标（Target）</a></li>
+<li><a href="#2%E8%A2%AB%E9%80%82%E9%85%8D%E8%80%85">2.被适配者</a></li>
+<li><a href="#3%E9%80%82%E9%85%8D%E5%99%A8">3.适配器</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B%E9%99%84%E5%BD%95">四、附录</a>
+<ul>
+<li><a href="#%E6%BA%90%E4%BB%A3%E7%A0%81">源代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE">运行截图</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%8F%9C%E5%8D%95%E6%A0%8F%E7%A8%8B%E5%BA%8F%E4%BA%8C">菜单栏（程序二）</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%A1%88%E4%BE%8B%E6%8F%8F%E8%BF%B0">一 应用场景与案例描述</a></li>
+<li><a href="#%E4%BA%8C-%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">二 案例分析与解决问题</a></li>
+<li><a href="#%E4%B8%89-%E5%90%84%E7%A7%8D%E8%A7%92%E8%89%B2%E6%8F%8F%E8%BF%B0%E4%B8%8Euml">三 各种角色描述与UML</a>
+<ul>
+<li><a href="#1-%E7%9B%AE%E6%A0%87target">1 目标（Target）</a></li>
+<li><a href="#2-%E8%A2%AB%E9%80%82%E9%85%8D%E8%80%85">2 被适配者</a></li>
+<li><a href="#3-%E9%80%82%E9%85%8D%E5%99%A8">3 适配器</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E9%99%84%E5%BD%95">四 附录</a>
+<ul>
+<li><a href="#41%E6%BA%90%E4%BB%A3%E7%A0%81">4.1源代码</a>
+<ul>
+<li><a href="#circlemenulayoutjava">CircleMenuLayout.java</a></li>
+<li><a href="#mainactivityjava">MainActivity.java</a></li>
+<li><a href="#activity_mainxml">activity_main.xml</a></li>
+<li><a href="#circle_menu_itemxml">circle_menu_item.xml</a></li>
+</ul>
+</li>
+<li><a href="#42%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE">4.2运行截图</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h2 id="%E6%89%A9%E5%B1%95%E5%9D%9E%EF%BC%88%E7%A8%8B%E5%BA%8F%E4%B8%80%EF%BC%89">扩展坞（程序一）</h2>
+<h3 id="%E4%B8%80%E3%80%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%A1%88%E4%BE%8B%E6%8F%8F%E8%BF%B0">一、应用场景与案例描述</h3>
+<p>新款Macbook那就是只有一个USB-C接口，对于需要同时进行充电、传输数据或连接打印机、投影仪等外设的用户来说实在不方便。则需要使用扩展坞进行接口的转换。则使用适配器的原理对接口进行转换。</p>
+<h3 id="%E4%BA%8C%E3%80%81%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">二、案例分析与解决问题</h3>
+<p>在上面的场景中，接口的转换使用了适配器的模式。
+适配器的适配程度：由于扩展坞的目标接口中的方法只有两个雷神3的Type-C接口，而被适配的接口有HDMI接口，雷电3接口，Type-c 3接口，TF/SD卡槽，两个USB3.0接口，所以为不完全适配。
+实现原理：将接口协议A、B进行统一，将所有端的协议全部替换成新协议，使用一套新协议；</p>
+<h3 id="%E4%B8%89%E3%80%81%E5%90%84%E7%A7%8D%E8%A7%92%E8%89%B2%E6%8F%8F%E8%BF%B0%E4%B8%8Euml">三、各种角色描述与UML</h3>
+<p><img src="https://s2.ax1x.com/2019/05/29/VuaFBQ.png" alt="VuaFBQ.png"></p>
+<h4 id="1%E7%9B%AE%E6%A0%87%EF%BC%88target%EF%BC%89">1.目标（Target）</h4>
+<p>LCD（显示器），Earphone（耳机），Phone（手机），TF（TF卡），SD（SD卡），UsbDisk（U盘），HardDisk（移动硬盘）等设备</p>
+<h4 id="2%E8%A2%AB%E9%80%82%E9%85%8D%E8%80%85">2.被适配者</h4>
+<p>多功能扩展坞的各种接口</p>
+<h4 id="3%E9%80%82%E9%85%8D%E5%99%A8">3.适配器</h4>
+<p>TreatyAdapter（多功能扩展坞）</p>
+<h3 id="%E5%9B%9B%E3%80%81%E9%99%84%E5%BD%95">四、附录</h3>
+<h4 id="%E6%BA%90%E4%BB%A3%E7%A0%81">源代码</h4>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">//HDMI接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">HDMI</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//VGA接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">VGA</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//Thunder接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Thunder</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//Micro接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Micro</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//TypeC接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">TypeC</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//OMTP接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">OMTP</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//TF卡槽</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">TFCard</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//CF卡槽</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">CFCard</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//SD卡槽</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">SDCard</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//miniSD卡槽</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">miniSDCard</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//USB3One接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">USB3One</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//Lightning接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Lightning</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//USB3Two接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">USB3Two</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//RJ45接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">RJ45</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>;
+}
+
+<span class="hljs-comment">//十四向适配器模式</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FourteenAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">HDMI</span>, <span class="hljs-title">VGA</span>, <span class="hljs-title">Thunder</span>, <span class="hljs-title">Micro</span>, <span class="hljs-title">TypeC</span>, <span class="hljs-title">OMTP</span>, <span class="hljs-title">TFCard</span>, <span class="hljs-title">CFCard</span>, <span class="hljs-title">SDCard</span>, <span class="hljs-title">miniSDCard</span>, <span class="hljs-title">USB3One</span>, <span class="hljs-title">Lightning</span>, <span class="hljs-title">USB3Two</span>, <span class="hljs-title">RJ45</span></span>{
+    HDMI hdmi;
+VGA vga;
+    Thunder thunder;
+    Micro micro;
+    TypeC typec;
+    OMTP omtp;
+    TFCard tfcard;
+    CFCard cfcard;
+    SDCard sdcard;
+    miniSDCard minisdcard;
+    USB3One usb3one;
+    Lightning lightning;
+    USB3Two usb3two;
+    RJ45 rj45;
+    FourteenAdapter(HDMI hdmi, VGA vga, Thunder thunder, Micro micro, TypeC typec, OMTP omtp, TFCard tfcard, CFCard cfcard, SDCard sdcard, miniSDCard minisdcard, USB3One usb3one, Lightning lightning, USB3Two usb3two, RJ45 rj45){
+       <span class="hljs-keyword">this</span>.hdmi=hdmi;
+       <span class="hljs-keyword">this</span>.vga=vga;
+       <span class="hljs-keyword">this</span>.thunder=thunder;
+       <span class="hljs-keyword">this</span>.micro=micro;
+       <span class="hljs-keyword">this</span>.typec=typec;
+       <span class="hljs-keyword">this</span>.omtp=omtp;
+       <span class="hljs-keyword">this</span>.tfcard=tfcard;
+       <span class="hljs-keyword">this</span>.cfcard=cfcard;
+       <span class="hljs-keyword">this</span>.sdcard=sdcard;
+       <span class="hljs-keyword">this</span>.minisdcard=minisdcard;
+       <span class="hljs-keyword">this</span>.usb3one=usb3one;
+       <span class="hljs-keyword">this</span>.lightning=lightning;
+       <span class="hljs-keyword">this</span>.usb3two=usb3two;
+       <span class="hljs-keyword">this</span>.rj45=rj45;
+    }
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> HDMI) {
+        System.out.println(<span class="hljs-string">"\t转换成HDMI接口:"</span>);
+        vga.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> VGA) {
+        System.out.println(<span class="hljs-string">"\t转换成VGA接口:"</span>);
+        hdmi.connectMacbook()
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> Thunder) {
+        System.out.println(<span class="hljs-string">"\t转换成雷电接口:"</span>);
+        micro.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> Micro) {
+        System.out.println(<span class="hljs-string">"\t转换成安卓接口:"</span>);
+        thunder.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> TypeC) {
+        System.out.println(<span class="hljs-string">"\t转换成TypeC接口:"</span>);
+        omtp.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> OMTP) {
+        System.out.println(<span class="hljs-string">"\t转换成VGA接口:"</span>);
+        typec.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> TFCard) {
+        System.out.println(<span class="hljs-string">"\t转换成TF卡槽:"</span>);
+        cfcard.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> CFCard) {
+        System.out.println(<span class="hljs-string">"\t转换成CF卡槽:"</span>);
+        tfcard.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> SDCard) {
+        System.out.println(<span class="hljs-string">"\t转换成SDCard卡槽:"</span>);
+        minisdcard.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> miniSDCard) {
+        System.out.println(<span class="hljs-string">"\t转换成miniSDCard卡槽:"</span>);
+        sdcard.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> USB3One) {
+        System.out.println(<span class="hljs-string">"\t转换成HDMI接口:"</span>);
+        lightning.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> Lightning) {
+        System.out.println(<span class="hljs-string">"\t转换成VGA接口:"</span>);
+        usb3one.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> USB3Two) {
+        System.out.println(<span class="hljs-string">"\t转换成HDMI接口:"</span>);
+        rj45.connectMacbook();
+    }
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> RJ45) {
+        System.out.println(<span class="hljs-string">"\t转换成VGA接口:"</span>);
+        usb3two.connectMacbook();
+    }
+   }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Application</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String args[])</span></span>{
+       HDMI hdmi;
+       Thunder thunder;
+       TypeC typec;
+       TFCard tfcard;
+       SDCard sdcard;
+       USB3One usb3one;
+       USB3Two usb3two;
+       LCD lcd=<span class="hljs-keyword">new</span> LCD(); <span class="hljs-comment">//显示器</span>
+       ThundeRobot thunderobot=<span class="hljs-keyword">new</span> ThundeRobot();<span class="hljs-comment">//主机</span>
+       Watch watch=<span class="hljs-keyword">new</span> Watch();<span class="hljs-comment">//手表</span>
+       XiaoMi xiaomi=<span class="hljs-keyword">new</span> XiaoMi();<span class="hljs-comment">//安卓手机</span>
+       Pixel pixel=<span class="hljs-keyword">new</span> Pixel(); <span class="hljs-comment">//TypeC手机</span>
+       Sony sony=<span class="hljs-keyword">new</span> Sony(); <span class="hljs-comment">//耳机</span>
+       TF tf=<span class="hljs-keyword">new</span> TF();  <span class="hljs-comment">//TF卡</span>
+       CF cf=<span class="hljs-keyword">new</span> CF();  <span class="hljs-comment">//CF卡</span>
+       SD sd=<span class="hljs-keyword">new</span> SD();  <span class="hljs-comment">//SD卡</span>
+       miniSD minisd=<span class="hljs-keyword">new</span> miniSD();  <span class="hljs-comment">//miniSD卡</span>
+       UsbDisk usbdisk=<span class="hljs-keyword">new</span> UsbDisk();   <span class="hljs-comment">//U盘</span>
+       iPad ipad=<span class="hljs-keyword">new</span> iPad();    <span class="hljs-comment">//平板</span>
+       HardDisk harddisk=<span class="hljs-keyword">new</span> HardDisk();    <span class="hljs-comment">//移动硬盘</span>
+       WIFI wifi=<span class="hljs-keyword">new</span> WIFI();    <span class="hljs-comment">//路由</span>
+       FourteenAdapter adapter = <span class="hljs-keyword">new</span> FourteenAdapter(lcd, thunderobot, watch, xiaomi, pixel, sony, tf, cf, sd, minisd, usbdisk, ipad, harddisk, wifi);
+       System.out.println(<span class="hljs-string">"扩展坞连接："</span>);
+       adapter.connectMacbook();
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LCD</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">HDMI</span></span>{
+    String name;
+    LCD (){
+        name = <span class="hljs-string">"LCD显示屏"</span>;
+    }
+    LCD (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ThundeRobot</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">VGA</span></span>{
+    String name;
+    ThundeRobot (){
+        name = <span class="hljs-string">"雷神RTX"</span>;
+    }
+    ThundeRobot (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Watch</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Thunder</span></span>{
+    String name;
+    Watch (){
+        name = <span class="hljs-string">"HUAWEI WATCH 2"</span>;
+    }
+    Watch (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">XiaoMi</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Micro</span></span>{
+    String name;
+    XiaoMi (){
+        name = <span class="hljs-string">"小米8"</span>;
+    }
+    XiaoMi (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pixel</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">TypeC</span></span>{
+    String name;
+    Pixel (){
+        name = <span class="hljs-string">"Google Pixel3 XL"</span>;
+    }
+    Pixel (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Sony</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">OMTP</span></span>{
+    String name;
+    Sony (){
+        name = <span class="hljs-string">"Sony WH-1000XM3"</span>;
+    }
+    Sony (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TF</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">TFCard</span></span>{
+    String name;
+    TF (){
+        name = <span class="hljs-string">"Kingstom TF卡"</span>;
+    }
+    TF (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CF</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">CFCard</span></span>{
+    String name;
+    CF (){
+        name = <span class="hljs-string">"Lenovo CF卡"</span>;
+    }
+    CF (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SD</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">SDCard</span></span>{
+    String name;
+    SD (){
+        name = <span class="hljs-string">"Sumsung SD卡"</span>;
+    }
+    SD (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">miniSD</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">miniSDCard</span></span>{
+    String name;
+    miniSD (){
+        name = <span class="hljs-string">"SanDisk 迷你SD卡"</span>;
+    }
+    miniSD (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UsbDisk</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">USB3One</span></span>{
+    String name;
+    UsbDisk (){
+        name = <span class="hljs-string">"Dell U盘"</span>;
+    }
+    UsbDisk (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">iPad</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Lightning</span></span>{
+    String name;
+    iPad (){
+        name = <span class="hljs-string">"iPad 3"</span>;
+    }
+    iPad (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HardDisk</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">USB3Two</span></span>{
+    String name;
+    HardDisk (){
+        name = <span class="hljs-string">"Toshiba数据线"</span>;
+    }
+    HardDisk (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WIFI</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">RJ45</span></span>{
+    String name;
+    WIFI (){
+        name = <span class="hljs-string">"TP-LINK路由器"</span>;
+    }
+    WIFI (String name){
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connectMacbook</span><span class="hljs-params">()</span> </span>{
+        System.out.println(<span class="hljs-string">"\t"</span> + name + <span class="hljs-string">"连接成功"</span>);
+    }
+}
+</div></code></pre>
+<h4 id="%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE">运行截图</h4>
+<p><img src="https://s2.ax1x.com/2019/05/29/VuUqne.png" alt="VuUqne.png"></p>
+<h2 id="%E8%8F%9C%E5%8D%95%E6%A0%8F%EF%BC%88%E7%A8%8B%E5%BA%8F%E4%BA%8C%EF%BC%89">菜单栏（程序二）</h2>
+<h3 id="%E4%B8%80-%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%A1%88%E4%BE%8B%E6%8F%8F%E8%BF%B0">一 应用场景与案例描述</h3>
+<p>现在人们的生活离不开App，而稍微复杂一点的App都会有一个最基础的组件-菜单栏，菜单栏各式各样，而现在的菜单栏按钮文本和图片至少设置其一，而现在很多菜单项都是两者兼具。使用适配器将图片和文字进行适配。</p>
+<h3 id="%E4%BA%8C-%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">二 案例分析与解决问题</h3>
+<p>在上面的场景中，菜单项的转换使用了适配器的模式。
+适配器的适配程度：同时拥有图片和文字，为完全适配。
+实现原理：将函数逻辑进行统一，将所有函数全部替换成新函数；</p>
+<h3 id="%E4%B8%89-%E5%90%84%E7%A7%8D%E8%A7%92%E8%89%B2%E6%8F%8F%E8%BF%B0%E4%B8%8Euml">三 各种角色描述与UML</h3>
+<p><img src="https://s2.ax1x.com/2019/05/29/VuwxhR.png" alt="VuwxhR.png"></p>
+<h4 id="1-%E7%9B%AE%E6%A0%87%EF%BC%88target%EF%BC%89">1 目标（Target）</h4>
+<p>mItemImgs(安全中心,特色服务, 投资理财,转账汇款, 我的账户, 信用卡),resIds（图片），texts（文本）</p>
+<h4 id="2-%E8%A2%AB%E9%80%82%E9%85%8D%E8%80%85">2 被适配者</h4>
+<p>多功能菜单栏函数</p>
+<h4 id="3-%E9%80%82%E9%85%8D%E5%99%A8">3 适配器</h4>
+<p>etMenuItemIconsAndTexts（多功能菜单栏）</p>
+<h3 id="%E5%9B%9B-%E9%99%84%E5%BD%95">四 附录</h3>
+<h4 id="41%E6%BA%90%E4%BB%A3%E7%A0%81">4.1源代码</h4>
+<p><img src="https://s2.ax1x.com/2019/05/29/VudMGt.png" alt="VudMGt.png"></p>
+<h5 id="circlemenulayoutjava">CircleMenuLayout.java</h5>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.example;
+
+<span class="hljs-keyword">import</span> android.content.Context;
+<span class="hljs-keyword">import</span> android.util.AttributeSet;
+<span class="hljs-keyword">import</span> android.util.DisplayMetrics;
+<span class="hljs-keyword">import</span> android.view.LayoutInflater;
+<span class="hljs-keyword">import</span> android.view.MotionEvent;
+<span class="hljs-keyword">import</span> android.view.View;
+<span class="hljs-keyword">import</span> android.view.ViewGroup;
+<span class="hljs-keyword">import</span> android.view.WindowManager;
+<span class="hljs-keyword">import</span> android.widget.ImageView;
+<span class="hljs-keyword">import</span> android.widget.TextView;
+
+<span class="hljs-comment">/**
+ * Package: example
+ * Created by zyh
+ * on 2019/5/26
+ */</span>
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CircleMenuLayout</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ViewGroup</span> </span>{
+
+    <span class="hljs-comment">//变量</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> mRadius;<span class="hljs-comment">//直径</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">float</span> RADIO_DEFAULT_CHILD_DIMENSION = <span class="hljs-number">1</span> / <span class="hljs-number">4f</span>;<span class="hljs-comment">//默认child item尺寸</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">float</span> RADIO＿PADDING_LAYOUT = <span class="hljs-number">1</span> / <span class="hljs-number">12f</span>;  <span class="hljs-comment">//内边距</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> mPadding;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> mStartAngle = <span class="hljs-number">0</span>;<span class="hljs-comment">//开始角度</span>
+
+    <span class="hljs-keyword">private</span> String[] mItemTexts;<span class="hljs-comment">//菜单项文本</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span>[] mItemImgs;<span class="hljs-comment">//菜单项图片</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> mMenuItemCount;
+    <span class="hljs-comment">/**
+     * MenuItem的点击事件接口
+     */</span>
+    <span class="hljs-keyword">private</span> OnMenuItemClickListener mOnItemClickListener;
+    <span class="hljs-comment">/**
+     * 检测按下到抬起时旋转的角度
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> mTmpAngle;
+    <span class="hljs-comment">/**
+     * 检测按下到抬起时使用的时间
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">long</span> mDownTime;
+
+    <span class="hljs-comment">/**
+     * 判断是否正在自动滚动
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> isFling;
+
+    <span class="hljs-comment">/**
+     * 当每秒移动角度达到该值时，认为是快速移动
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> FLINGABLE_VALUE = <span class="hljs-number">300</span>;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> mFlingableValue = FLINGABLE_VALUE;
+    <span class="hljs-comment">/**
+     * 如果移动角度达到该值，则屏蔽点击
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> NOCLICK_VALUE = <span class="hljs-number">3</span>;
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> mMenuItemLayoutId = R.layout.circle_menu_item;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircleMenuLayout</span><span class="hljs-params">(Context context)</span> </span>{
+        <span class="hljs-keyword">super</span>(context);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircleMenuLayout</span><span class="hljs-params">(Context context, AttributeSet attrs)</span> </span>{
+
+        <span class="hljs-keyword">super</span>(context, attrs);
+        <span class="hljs-comment">// 无视padding</span>
+        setPadding(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircleMenuLayout</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr)</span> </span>{
+        <span class="hljs-keyword">super</span>(context, attrs, defStyleAttr);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircleMenuLayout</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr, <span class="hljs-keyword">int</span> defStyleRes)</span> </span>{
+        <span class="hljs-keyword">super</span>(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onMeasure</span><span class="hljs-params">(<span class="hljs-keyword">int</span> widthMeasureSpec, <span class="hljs-keyword">int</span> heightMeasureSpec)</span> </span>{
+        <span class="hljs-comment">//测量布局</span>
+        measureLayoutView(widthMeasureSpec, heightMeasureSpec);
+        <span class="hljs-comment">//测量子控件</span>
+        measureChildViews();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">measureLayoutView</span><span class="hljs-params">(<span class="hljs-keyword">int</span> widthMeasureSpec, <span class="hljs-keyword">int</span> heightMeasureSpec)</span> </span>{
+        <span class="hljs-keyword">int</span> resWidth = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> resHeight = <span class="hljs-number">0</span>;
+
+        <span class="hljs-comment">//根据传入参数，获得测量值和模式</span>
+        <span class="hljs-keyword">int</span> width = MeasureSpec.getSize(widthMeasureSpec);
+        <span class="hljs-keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);
+
+        <span class="hljs-keyword">int</span> height = MeasureSpec.getSize(heightMeasureSpec);
+        <span class="hljs-keyword">int</span> heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        <span class="hljs-comment">//是否设置精确值</span>
+        <span class="hljs-keyword">if</span> (widthMode != MeasureSpec.EXACTLY || heightMode != MeasureSpec.EXACTLY) {
+            resWidth = getSuggestedMinimumWidth();
+            resWidth = (resWidth == <span class="hljs-number">0</span> ? getDefaultWidth() : resWidth);
+
+            resHeight = getSuggestedMinimumHeight();
+            resHeight = (resHeight == <span class="hljs-number">0</span> ? getDefaultWidth() : resHeight);
+        } <span class="hljs-keyword">else</span> {
+            resWidth = resHeight = Math.min(width, height);
+        }
+        setMeasuredDimension(resWidth, resHeight);
+    }
+
+    <span class="hljs-comment">/**
+     * 获得默认该layout的尺寸
+     *
+     * <span class="hljs-doctag">@return</span>
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getDefaultWidth</span><span class="hljs-params">()</span> </span>{
+        WindowManager wm = (WindowManager) getContext().getSystemService(
+                Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = <span class="hljs-keyword">new</span> DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        <span class="hljs-keyword">return</span> Math.min(outMetrics.widthPixels, outMetrics.heightPixels);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">measureChildViews</span><span class="hljs-params">()</span> </span>{
+        mRadius = Math.max(getMeasuredWidth(), getMeasuredHeight());<span class="hljs-comment">//获取半径</span>
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> count = getChildCount();<span class="hljs-comment">//获取menu item个数</span>
+        <span class="hljs-keyword">int</span> childSize = (<span class="hljs-keyword">int</span>) (mRadius * RADIO_DEFAULT_CHILD_DIMENSION);<span class="hljs-comment">//menu item 尺寸</span>
+        <span class="hljs-keyword">int</span> childMode = MeasureSpec.EXACTLY;
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; count; i++) {
+            <span class="hljs-keyword">final</span> View child = getChildAt(i);
+            <span class="hljs-keyword">if</span> (child.getVisibility() == GONE) {
+                <span class="hljs-keyword">continue</span>;
+            }
+
+            <span class="hljs-comment">//计算menu item 的尺寸，模式，去对item测量</span>
+            <span class="hljs-keyword">int</span> makeMeasureSpec = -<span class="hljs-number">1</span>;
+            makeMeasureSpec = MeasureSpec.makeMeasureSpec(childSize, childMode);
+            child.measure(makeMeasureSpec, makeMeasureSpec);
+        }
+        mPadding = RADIO＿PADDING_LAYOUT * mRadius;
+    }
+
+    <span class="hljs-comment">//设置menu item监听</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">OnMenuItemClickListener</span> </span>{
+        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">itemClick</span><span class="hljs-params">(View view, <span class="hljs-keyword">int</span> position)</span></span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">itemCenterClick</span><span class="hljs-params">(View view)</span></span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setOnItemclickListener</span><span class="hljs-params">(OnMenuItemClickListener listener)</span> </span>{
+        <span class="hljs-keyword">this</span>.mOnItemClickListener = listener;
+    }
+
+    <span class="hljs-comment">/**
+     * 布局view item的位置
+     *
+     * <span class="hljs-doctag">@param</span> changed
+     * <span class="hljs-doctag">@param</span> l
+     * <span class="hljs-doctag">@param</span> t
+     * <span class="hljs-doctag">@param</span> r
+     * <span class="hljs-doctag">@param</span> b
+     */</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onLayout</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> changed, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> t, <span class="hljs-keyword">int</span> r, <span class="hljs-keyword">int</span> b)</span> </span>{
+        <span class="hljs-keyword">int</span> layoutRadius = mRadius;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> childCount = getChildCount();
+        <span class="hljs-keyword">int</span> left, top;
+        <span class="hljs-keyword">int</span> itemwidth = (<span class="hljs-keyword">int</span>) (layoutRadius * RADIO_DEFAULT_CHILD_DIMENSION); <span class="hljs-comment">//item尺寸</span>
+        <span class="hljs-comment">// 根据menu item的个数，计算角度</span>
+        <span class="hljs-keyword">float</span> angleDelay = <span class="hljs-number">360</span> / (getChildCount() - <span class="hljs-number">1</span>);
+        <span class="hljs-comment">//遍历布局item</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; childCount; i++) {
+            <span class="hljs-keyword">final</span> View child = getChildAt(i);
+
+            <span class="hljs-keyword">if</span> (child.getId() == R.id.id_circle_menu_item_center)
+                <span class="hljs-keyword">continue</span>;
+
+            <span class="hljs-keyword">if</span> (child.getVisibility() == GONE) {
+                <span class="hljs-keyword">continue</span>;
+            }
+
+            mStartAngle %= <span class="hljs-number">360</span>;<span class="hljs-comment">//菜单的起始角度</span>
+
+            <span class="hljs-comment">//中心到menu item的距离</span>
+            <span class="hljs-keyword">float</span> distanceeFromCenter = layoutRadius / <span class="hljs-number">2f</span> - itemwidth / <span class="hljs-number">2</span> - mPadding;
+            <span class="hljs-comment">//left坐标</span>
+            left = layoutRadius / <span class="hljs-number">2</span> + (<span class="hljs-keyword">int</span>) Math.round(distanceeFromCenter * Math.cos(Math.toRadians(mStartAngle)) - <span class="hljs-number">1</span> / <span class="hljs-number">2f</span> * itemwidth);
+            <span class="hljs-comment">//top坐标</span>
+            top = layoutRadius / <span class="hljs-number">2</span> + (<span class="hljs-keyword">int</span>) Math.round(distanceeFromCenter * Math.sin(Math.toRadians(mStartAngle)) - <span class="hljs-number">1</span> / <span class="hljs-number">2f</span> * itemwidth);
+
+            <span class="hljs-comment">//布局 child view</span>
+            child.layout(left, top, left + itemwidth, top + itemwidth);
+            <span class="hljs-comment">//</span>
+            mStartAngle += angleDelay;
+        }
+
+        <span class="hljs-comment">// 找到中心的view，如果存在设置onclick事件</span>
+        <span class="hljs-keyword">final</span> View centerView = findViewById(R.id.id_circle_menu_item_center);
+        <span class="hljs-keyword">if</span> (centerView != <span class="hljs-keyword">null</span>) {
+            centerView.setOnClickListener(<span class="hljs-keyword">new</span> OnClickListener() {
+                <span class="hljs-meta">@Override</span>
+                <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onClick</span><span class="hljs-params">(View v)</span> </span>{
+                    <span class="hljs-keyword">if</span> (mOnItemClickListener != <span class="hljs-keyword">null</span>) {
+                        mOnItemClickListener.itemCenterClick(v);
+                    }
+                }
+            });
+
+            <span class="hljs-comment">//设置center item位置</span>
+            <span class="hljs-keyword">int</span> cl = layoutRadius / <span class="hljs-number">2</span> - centerView.getMeasuredWidth() / <span class="hljs-number">2</span>;
+            <span class="hljs-keyword">int</span> cr = cl + centerView.getMeasuredWidth();
+            centerView.layout(cl, cl, cr, cr);
+        }
+    }
+
+    <span class="hljs-comment">/**
+     * 设置adpater
+     */</span>
+<span class="hljs-comment">//    public void setAdapter(ListAdapter adapter) {</span>
+<span class="hljs-comment">//        this.mAdapter = adapter;</span>
+<span class="hljs-comment">//    }</span>
+
+    <span class="hljs-comment">/**
+     * 设置菜单条目的图标和文本
+     *
+     * <span class="hljs-doctag">@param</span> resIds
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setMenuItemIconsAndTexts</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] resIds, String[] texts)</span> </span>{
+        mItemImgs = resIds;
+        mItemTexts = texts;
+
+        <span class="hljs-comment">// 参数检查</span>
+        <span class="hljs-keyword">if</span> (resIds == <span class="hljs-keyword">null</span> &amp;&amp; texts == <span class="hljs-keyword">null</span>) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(<span class="hljs-string">"菜单项文本和图片至少设置其一"</span>);
+        }
+
+        <span class="hljs-comment">// 初始化mMenuCount</span>
+        mMenuItemCount = resIds == <span class="hljs-keyword">null</span> ? texts.length : resIds.length;
+
+        <span class="hljs-keyword">if</span> (resIds != <span class="hljs-keyword">null</span> &amp;&amp; texts != <span class="hljs-keyword">null</span>) {
+            mMenuItemCount = Math.min(resIds.length, texts.length);
+        }
+
+        addMenuItems();
+
+    }
+
+
+    <span class="hljs-comment">/**
+     * 设置MenuItem的布局文件，必须在setMenuItemIconsAndTexts之前调用
+     *
+     * <span class="hljs-doctag">@param</span> mMenuItemLayoutId
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setMenuItemLayoutId</span><span class="hljs-params">(<span class="hljs-keyword">int</span> mMenuItemLayoutId)</span> </span>{
+        <span class="hljs-keyword">this</span>.mMenuItemLayoutId = mMenuItemLayoutId;
+    }
+
+
+    <span class="hljs-comment">/**
+     * 构建菜单项
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">addMenuItems</span><span class="hljs-params">()</span> </span>{
+        LayoutInflater mInflater = LayoutInflater.from(getContext());
+
+        <span class="hljs-comment">//        // 根据用户的参数，初始化menu item</span>
+        <span class="hljs-comment">//        for (int i = 0; i &lt; mAdapter.getCount(); i++) {</span>
+        <span class="hljs-comment">//            final View itemView = mAdapter.getView(i, null, this);</span>
+        <span class="hljs-comment">//            final int position = i;</span>
+        <span class="hljs-comment">//            itemView.setOnClickListener(new OnClickListener() {</span>
+        <span class="hljs-comment">//                @Override</span>
+        <span class="hljs-comment">//                public void onClick(View v) {</span>
+        <span class="hljs-comment">//                    if (mOnItemClickListener != null) {</span>
+        <span class="hljs-comment">//                        mOnItemClickListener.onClick(itemView, position);</span>
+        <span class="hljs-comment">//                    }</span>
+        <span class="hljs-comment">//                }</span>
+        <span class="hljs-comment">//            });</span>
+        <span class="hljs-comment">//            addView(itemView);</span>
+        <span class="hljs-comment">//</span>
+        <span class="hljs-comment">//        }</span>
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; mMenuItemCount; i++) {
+            <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j = i;
+            View view = mInflater.inflate(mMenuItemLayoutId, <span class="hljs-keyword">this</span>, <span class="hljs-keyword">false</span>);
+            ImageView img = (ImageView) view.findViewById(R.id.id_circle_menu_item_image);
+            TextView tv = (TextView) view.findViewById(R.id.id_circle_menu_item_text);
+            <span class="hljs-keyword">if</span> (img != <span class="hljs-keyword">null</span>) {
+                img.setVisibility(View.VISIBLE);
+                img.setImageResource(mItemImgs[i]);
+                img.setOnClickListener(<span class="hljs-keyword">new</span> OnClickListener() {
+                    <span class="hljs-meta">@Override</span>
+                    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onClick</span><span class="hljs-params">(View v)</span> </span>{
+                        <span class="hljs-keyword">if</span> (mOnItemClickListener != <span class="hljs-keyword">null</span>) {
+                            mOnItemClickListener.itemClick(v, j);
+                        }
+
+                    }
+                });
+            }
+            <span class="hljs-keyword">if</span> (tv != <span class="hljs-keyword">null</span>) {
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(mItemTexts[i]);
+            }
+            addView(view);
+        }
+    }
+
+    <span class="hljs-comment">/**
+     * 设置内边距的比例
+     *
+     * <span class="hljs-doctag">@param</span> mPadding
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setPadding</span><span class="hljs-params">(<span class="hljs-keyword">float</span> mPadding)</span> </span>{
+        <span class="hljs-keyword">this</span>.mPadding = mPadding;
+    }
+
+
+    <span class="hljs-comment">/**
+     * 记录上一次的x，y坐标
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> mLastX;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> mLastY;
+    <span class="hljs-comment">/**
+     * 自动滚动的Runnable
+     */</span>
+    <span class="hljs-keyword">private</span> AutoFlingRunnable mFlingRunnable;
+
+    <span class="hljs-comment">/**
+     * 自动滚动的任务
+     *
+     * <span class="hljs-doctag">@author</span> zhy
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AutoFlingRunnable</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Runnable</span> </span>{
+
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> angelPerSecond;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AutoFlingRunnable</span><span class="hljs-params">(<span class="hljs-keyword">float</span> velocity)</span> </span>{
+            <span class="hljs-keyword">this</span>.angelPerSecond = velocity;
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-comment">// 如果小于20,则停止</span>
+            <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">int</span>) Math.abs(angelPerSecond) &lt; <span class="hljs-number">20</span>) {
+                isFling = <span class="hljs-keyword">false</span>;
+                <span class="hljs-keyword">return</span>;
+            }
+            isFling = <span class="hljs-keyword">true</span>;
+            <span class="hljs-comment">// 不断改变mStartAngle，让其滚动，/30为了避免滚动太快</span>
+            mStartAngle += (angelPerSecond / <span class="hljs-number">30</span>);
+            <span class="hljs-comment">// 逐渐减小这个值</span>
+            angelPerSecond /= <span class="hljs-number">1.0666F</span>;
+            postDelayed(<span class="hljs-keyword">this</span>, <span class="hljs-number">30</span>);
+            <span class="hljs-comment">// 重新布局</span>
+            requestLayout();
+        }
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">dispatchTouchEvent</span><span class="hljs-params">(MotionEvent event)</span> </span>{
+        <span class="hljs-keyword">float</span> x = event.getX();
+        <span class="hljs-keyword">float</span> y = event.getY();
+        <span class="hljs-keyword">switch</span> (event.getAction()) {
+            <span class="hljs-keyword">case</span> MotionEvent.ACTION_DOWN:
+                mLastX = x;
+                mLastY = y;
+                mDownTime = System.currentTimeMillis();
+                mTmpAngle = <span class="hljs-number">0</span>;
+                <span class="hljs-comment">// 如果当前已经在快速滚动</span>
+                <span class="hljs-keyword">if</span> (isFling) {
+                    <span class="hljs-comment">// 移除快速滚动的回调</span>
+                    removeCallbacks(mFlingRunnable);
+                    isFling = <span class="hljs-keyword">false</span>;
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+
+
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> MotionEvent.ACTION_MOVE:
+                <span class="hljs-comment">/**
+                 * 获得开始的角度
+                 */</span>
+                <span class="hljs-keyword">float</span> start = getAngle(mLastX, mLastY);
+                <span class="hljs-comment">/**
+                 * 获得当前的角度
+                 */</span>
+                <span class="hljs-keyword">float</span> end = getAngle(x, y);
+                <span class="hljs-comment">// 如果是一、四象限，则直接end-start，角度值都是正值</span>
+                <span class="hljs-keyword">if</span> (getQuadrant(x, y) == <span class="hljs-number">1</span> || getQuadrant(x, y) == <span class="hljs-number">4</span>) {
+                    mStartAngle += end - start;
+                    mTmpAngle += end - start;
+                } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// 二、三象限，色角度值是付值</span>
+                    mStartAngle += start - end;
+                    mTmpAngle += start - end;
+                }
+                <span class="hljs-comment">// 重新布局</span>
+                requestLayout();
+                mLastX = x;
+                mLastY = y;
+
+                <span class="hljs-keyword">break</span>;
+
+            <span class="hljs-keyword">case</span> MotionEvent.ACTION_UP:
+                <span class="hljs-comment">// 计算，每秒移动的角度</span>
+                <span class="hljs-keyword">float</span> anglePerSecond = mTmpAngle * <span class="hljs-number">1000</span> / (System.currentTimeMillis() - mDownTime);
+                <span class="hljs-comment">// 如果达到该值认为是快速移动</span>
+                <span class="hljs-keyword">if</span> (Math.abs(anglePerSecond) &gt; mFlingableValue &amp;&amp; !isFling) {
+                    <span class="hljs-comment">// post一个任务，去自动滚动</span>
+                    post(mFlingRunnable = <span class="hljs-keyword">new</span> AutoFlingRunnable(anglePerSecond));
+
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+                <span class="hljs-comment">// 如果当前旋转角度超过NOCLICK_VALUE屏蔽点击</span>
+                <span class="hljs-keyword">if</span> (Math.abs(mTmpAngle) &gt; NOCLICK_VALUE) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+                <span class="hljs-keyword">break</span>;
+        }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.dispatchTouchEvent(event);
+    }
+
+    <span class="hljs-comment">/**
+     * 主要为了action_down时，返回true
+     */</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">onTouchEvent</span><span class="hljs-params">(MotionEvent event)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+    }
+
+    <span class="hljs-comment">/**
+     * 根据触摸的位置，计算角度
+     *
+     * <span class="hljs-doctag">@param</span> xTouch
+     * <span class="hljs-doctag">@param</span> yTouch
+     * <span class="hljs-doctag">@return</span>
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> <span class="hljs-title">getAngle</span><span class="hljs-params">(<span class="hljs-keyword">float</span> xTouch, <span class="hljs-keyword">float</span> yTouch)</span> </span>{
+        <span class="hljs-keyword">double</span> x = xTouch - (mRadius / <span class="hljs-number">2</span>d);
+        <span class="hljs-keyword">double</span> y = yTouch - (mRadius / <span class="hljs-number">2</span>d);
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">float</span>) (Math.asin(y / Math.hypot(x, y)) * <span class="hljs-number">180</span> / Math.PI);
+    }
+
+    <span class="hljs-comment">/**
+     * 根据当前位置计算象限
+     *
+     * <span class="hljs-doctag">@param</span> x
+     * <span class="hljs-doctag">@param</span> y
+     * <span class="hljs-doctag">@return</span>
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getQuadrant</span><span class="hljs-params">(<span class="hljs-keyword">float</span> x, <span class="hljs-keyword">float</span> y)</span> </span>{
+        <span class="hljs-keyword">int</span> tmpX = (<span class="hljs-keyword">int</span>) (x - mRadius / <span class="hljs-number">2</span>);
+        <span class="hljs-keyword">int</span> tmpY = (<span class="hljs-keyword">int</span>) (y - mRadius / <span class="hljs-number">2</span>);
+        <span class="hljs-keyword">if</span> (tmpX &gt;= <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span> tmpY &gt;= <span class="hljs-number">0</span> ? <span class="hljs-number">4</span> : <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> tmpY &gt;= <span class="hljs-number">0</span> ? <span class="hljs-number">3</span> : <span class="hljs-number">2</span>;
+        }
+
+    }
+}
+</div></code></pre>
+<h5 id="mainactivityjava">MainActivity.java</h5>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.example;
+
+<span class="hljs-comment">/**
+ * Package: example
+ * Created by zyh
+ * on 2019/5/26
+ */</span>
+
+<span class="hljs-keyword">import</span> android.os.Bundle;
+<span class="hljs-keyword">import</span> android.support.v7.app.AppCompatActivity;
+<span class="hljs-keyword">import</span> android.view.View;
+<span class="hljs-keyword">import</span> android.widget.Toast;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatActivity</span> </span>{
+    <span class="hljs-keyword">private</span> CircleMenuLayout circleMenuLayout;
+    <span class="hljs-keyword">private</span> String[] mItemTexts = <span class="hljs-keyword">new</span> String[]{ <span class="hljs-string">"安全中心 "</span>, <span class="hljs-string">"特色服务"</span>, <span class="hljs-string">"投资理财"</span>,
+            <span class="hljs-string">"转账汇款"</span>, <span class="hljs-string">"我的账户"</span>, <span class="hljs-string">"信用卡"</span> };
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span>[] mItemImgs = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[]{R.mipmap.home_mbank_1_normal,
+            R.mipmap.home_mbank_2_normal, R.mipmap.home_mbank_3_normal,
+            R.mipmap.home_mbank_4_normal, R.mipmap.home_mbank_5_normal,
+            R.mipmap.home_mbank_6_normal };
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> </span>{
+        <span class="hljs-keyword">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        circleMenuLayout = (CircleMenuLayout) findViewById(R.id.id_cirlceMenu);
+        circleMenuLayout.setMenuItemIconsAndTexts(mItemImgs, mItemTexts);
+        circleMenuLayout.setOnItemclickListener(<span class="hljs-keyword">new</span> CircleMenuLayout.OnMenuItemClickListener() {
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">itemClick</span><span class="hljs-params">(View view, <span class="hljs-keyword">int</span> position)</span> </span>{
+                Toast.makeText(MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"选中："</span>+mItemTexts[position], Toast.LENGTH_SHORT).show();
+            }
+
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">itemCenterClick</span><span class="hljs-params">(View view)</span> </span>{
+                Toast.makeText(MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"选中：中间view"</span>, Toast.LENGTH_SHORT);
+            }
+        });
+    }
+}
+</div></code></pre>
+<h5 id="activitymainxml">activity_main.xml</h5>
+<pre class="hljs"><code><div><span class="php"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">"1.0"</span> encoding=<span class="hljs-string">"utf-8"</span><span class="hljs-meta">?&gt;</span></span>
+<span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.ConstraintLayout</span>
+    <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">xmlns:app</span>=<span class="hljs-string">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="hljs-attr">xmlns:tools</span>=<span class="hljs-string">"http://schemas.android.com/tools"</span>
+    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"match_parent"</span>
+    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"match_parent"</span>
+    <span class="hljs-attr">android:background</span>=<span class="hljs-string">"@mipmap/bg"</span>
+    <span class="hljs-attr">tools:context</span>=<span class="hljs-string">"com.example.MainActivity"</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">com.example.CircleMenuLayout</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@+id/id_cirlceMenu"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:background</span>=<span class="hljs-string">"@mipmap/circle_bg"</span>
+        <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">"parent"</span>
+        <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">"parent"</span>
+        <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">"parent"</span>
+        <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">"parent"</span>&gt;</span>
+
+        <span class="hljs-tag">&lt;<span class="hljs-name">RelativeLayout</span>
+            <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@id/id_circle_menu_item_center"</span>
+            <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+            <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>&gt;</span>
+
+            <span class="hljs-tag">&lt;<span class="hljs-name">ImageView</span>
+                <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"104.0dip"</span>
+                <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"104.0dip"</span>
+                <span class="hljs-attr">android:layout_centerInParent</span>=<span class="hljs-string">"true"</span>
+                <span class="hljs-attr">android:background</span>=<span class="hljs-string">"@mipmap/turnplate_center_unlogin"</span>/&gt;</span>
+
+            <span class="hljs-tag">&lt;<span class="hljs-name">ImageView</span>
+                <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"116.0dip"</span>
+                <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"116.0dip"</span>
+                <span class="hljs-attr">android:layout_centerInParent</span>=<span class="hljs-string">"true"</span>
+                <span class="hljs-attr">android:background</span>=<span class="hljs-string">"@mipmap/turnplate_mask_unlogin_normal"</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">RelativeLayout</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;/<span class="hljs-name">com.example.CircleMenuLayout</span>&gt;</span>
+
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">android.support.constraint.ConstraintLayout</span>&gt;</span>
+</div></code></pre>
+<h5 id="circlemenuitemxml">circle_menu_item.xml</h5>
+<pre class="hljs"><code><div><span class="php"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">"1.0"</span> encoding=<span class="hljs-string">"UTF-8"</span><span class="hljs-meta">?&gt;</span></span>
+<span class="hljs-tag">&lt;<span class="hljs-name">LinearLayout</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+    <span class="hljs-attr">android:gravity</span>=<span class="hljs-string">"center"</span>
+    <span class="hljs-attr">android:orientation</span>=<span class="hljs-string">"vertical"</span> &gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">ImageView</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@id/id_circle_menu_item_image"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:visibility</span>=<span class="hljs-string">"gone"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span> /&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">TextView</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@id/id_circle_menu_item_text"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:visibility</span>=<span class="hljs-string">"gone"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:textColor</span>=<span class="hljs-string">"@android:color/white"</span>
+        <span class="hljs-attr">android:text</span>=<span class="hljs-string">"保险"</span>
+        <span class="hljs-attr">android:textSize</span>=<span class="hljs-string">"14.0dip"</span> /&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">LinearLayout</span>&gt;</span>
+</div></code></pre>
+<h4 id="42%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE">4.2运行截图</h4>
+<p><img src="https://s2.ax1x.com/2019/05/29/VudnIA.png" alt="VudnIA.png">
+<img src="https://s2.ax1x.com/2019/05/29/Vudmad.png" alt="Vudmad.png"></p>
+
+</body>
+</html>
